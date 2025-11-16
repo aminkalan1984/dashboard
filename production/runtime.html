@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gentelella RTL Runtime</title>
+  <style>
+    /* Minimal loading state */
+    body{font-family:tahoma,arial,sans-serif;background:#f7f7f7;margin:0}
+    .loader{direction:rtl;text-align:center;padding:40px;color:#888}
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nunjucks/3.2.4/nunjucks.min.js"></script>
+</head>
+<body>
+  <div class="loader">در حال بارگذاری داشبورد...</div>
+  <script>
+    (function() {
+      function getQueryParam(name, def) {
+        var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+        return m ? decodeURIComponent(m[1]) : def;
+      }
+      var page = getQueryParam('page', 'index.html');
+      // Configure nunjucks to load templates from current directory (production/)
+      var env = new nunjucks.Environment(new nunjucks.WebLoader('.', { async: true }), { autoescape: false });
+      env.render(page, function(err, res) {
+        if (err) {
+          console.error(err);
+          document.body.innerHTML = '<pre style="direction:ltr;text-align:left;padding:16px;color:#b00;background:#fff;border:1px solid #eee;overflow:auto;">' +
+            (err && err.message ? err.message : String(err)) + '</pre>';
+          return;
+        }
+        document.open();
+        document.write(res);
+        document.close();
+      });
+    })();
+  </script>
+</body>
+</html>
